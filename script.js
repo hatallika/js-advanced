@@ -9,10 +9,10 @@ const goods = [
 
 const $goodsList = document.querySelector('.goods-list');
 
-const renderGoodsItem = ({title, price}) => { //сделали деструктуризацию объекта
-    return `<div class="goods-item"><div class="goods-item__img"></div><h3 class="goods-item__title">${title}
+const renderGoodsItem = ({title, price}) =>  //сделали деструктуризацию объекта
+    `<div class="goods-item"><div class="goods-item__img"></div><h3 class="goods-item__title">${title}
     </h3><p class="goods-item__price">Цена: ${price} у.е.</p><button class="goods-item__button">Добавить</button></div>`;
-};
+;
 
 // const renderGoodsList = (list=goods) => {
 //     let goodsList = list.map(item => renderGoodsItem(item.title, item.price)).join("\n"); // убрали запятую в выводе товара переведя массив элементов в строку
@@ -20,12 +20,13 @@ const renderGoodsItem = ({title, price}) => { //сделали деструкт�
 //     console.log(goodsList);
 // }
 
-const renderGoodsList = (list=goods) => {
-    let goodsList = list.map(item => renderGoodsItem(item)).join('\n');
+const renderGoodsList = (list=[]) => {
+    // let goodsList = list.map(item => renderGoodsItem(item)).join('\n');
+    let goodsList = list.map(renderGoodsItem).join('\n');
     
     $goodsList.insertAdjacentHTML('beforeend', goodsList);
 }
 
 
 
-renderGoodsList();
+renderGoodsList(goods);
