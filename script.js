@@ -21,9 +21,9 @@ class Api { // класс получения товара из api (из лек�
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if(xhr.status === 200) {
-                    success(JSON.parse(xhr.responseText));
+                    success(xhr.responseText);
                 } else if (xhr.status > 400) {
-                    error();
+                    error('Все пропало');
                 }            
             }
         }
@@ -31,6 +31,18 @@ class Api { // класс получения товара из api (из лек�
         xhr.open('GET', this.url, true);
         xhr.send();
                 
+    }
+
+    fromJSON(data){ // пример из лекции 3 добавление в цепочку промисов
+        return new Promise((resolve) => {
+            resolve(JSON.parse(data))
+        })
+    }
+
+    fetchPromise(){
+        return new Promise((resolve, reject) => {
+            this.fetch(reject,resolve)
+        } )
     }
 }
 
@@ -47,6 +59,15 @@ class GoodsItem {
     } 
 } 
 
+class Header {
+    constructor(){
+        this.$container = document.querySelector('header');
+        this.$button = this.$container.querySelector('.cart-button') 
+    }
+    setButtonHandler(callback){ //берет калбек и устанавливает как обработчик
+        this.$button.addEventListener('click', callback)
+    }
+}
 
 // список товаров. Задание 2. Добавили свойство суммы всех товаров
 class GoodsList { 
@@ -55,7 +76,11 @@ class GoodsList {
         this.$goodsList = document.querySelector('.goods-list'), 
         this.goods = []; 
 
-        this.api.fetch(this.onFetchError.bind(this), this.onFetchSuccess.bind(this)); // проверить
+        //this.api.fetch(this.onFetchError.bind(this), this.onFetchSuccess.bind(this)); // проверить
+        this.api.fetchPromise()
+            .then((response) => this.api.fromJSON(response))
+            .then((data) => {this.onFetchSuccess(data) })
+            .catch((err) => {this.onFetchError(err) })
     }
 
     
@@ -64,8 +89,8 @@ class GoodsList {
         this.render();
     }
 
-    onFetchError() {
-        this.$goodsList.insertAdjacentHTML('beforeend', '<h3>Ошибка</h3>')
+    onFetchError(err) {
+        this.$goodsList.insertAdjacentHTML('beforeend', `<h3>${err}</h3>`)
     }
     
     fetchGoods() {
@@ -118,6 +143,12 @@ class CartList {
     constructor() {
         this.addCartItems = [];
     }
+
+    openCart(){
+        console.log('корзина появилась в консоли')
+    }
+
+
     // добавление товара в корзину после действия пользователя (нажать добавить)
     addToCart(){} 
     
@@ -130,7 +161,9 @@ class CartList {
     //вывод товаров 
     render(){}
 }
-
+const header = new Header();
+const cartList = new CartList();
+header.setButtonHandler(cartList.openCart);
 const goodsList = new GoodsList();
 
 // goodsList.fetchGoods(); // чтобы записать список товаров в свойство goods
