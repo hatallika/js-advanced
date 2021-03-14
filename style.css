@@ -13,19 +13,33 @@ body {
     margin: 0 auto;
 }
 
+.main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
 
 .goods-list {
+    width: 50%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     margin: 20px 0 0 0;
 
 }
+
+.cart-list {
+    width: 40%;
+    border: 1px solid #bdbdbd;
+    margin: 20px 0 0 0;
+    padding: 10px;
+}
 .goods-item {
     width: 200px;
     background: #f0f0f0;
     padding: 5px;
     margin-bottom: 10px;
+    min-height: 200px;
 }
 .bestseller {
     background: #ffbd88;

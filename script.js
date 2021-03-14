@@ -4,6 +4,7 @@
 */
 const API_URL = "https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses";
 
+
 class Api { // класс получения товара из api (из лекции lesson-2)
     constructor() {
         this.url = `${API_URL}/catalogData.json`;
@@ -48,14 +49,15 @@ class Api { // класс получения товара из api (из лек�
 
 // класс товара
 class GoodsItem { 
-    constructor (product_name, price) {
+    constructor (product_name, price, id_product) {
         this.product_name = product_name;
-        this.price = price; 
+        this.price = price;        
+        this.id_product = id_product;
     }
 
     getHtml () { // метод возвращает html разметку
         return `<div class="goods-item"><div class="goods-item__img"></div><h3 class="goods-item__title">${this.product_name}
-    </h3><p class="goods-item__price">Цена: ${this.price} у.е.</p><button class="goods-item__button">Добавить</button></div>`;
+    </h3><p class="goods-item__price">Цена: ${this.price} у.е.</p><button class="goods-item__button" id="${this.id_product}">Добавить</button></div>`;
     } 
 } 
 
@@ -71,10 +73,12 @@ class Header {
 
 // список товаров. Задание 2. Добавили свойство суммы всех товаров
 class GoodsList { 
-    constructor() {
+    constructor(isClass) {
         this.api = new Api(); // откуда получаем товары
-        this.$goodsList = document.querySelector('.goods-list'), 
-        this.goods = []; 
+        this.$goodsList = document.querySelector('.'+ isClass), 
+        this.goods = [];
+        this.header = new Header; 
+        
 
         //this.api.fetch(this.onFetchError.bind(this), this.onFetchSuccess.bind(this)); // проверить
         this.api.fetchPromise()
@@ -85,46 +89,62 @@ class GoodsList {
 
     
     onFetchSuccess(data) {
-        this.goods = data.map(({product_name, price}) => new GoodsItem(product_name, price)); // 
+        this.goods = data.map(({product_name, price, id_product}) => new GoodsItem(product_name, price, id_product)); // 
         this.render();
+        //this.header.setButtonHandler(cartList.renderCart); // вызывать корзину по кнопке / пока вызываем на той же странице
     }
 
     onFetchError(err) {
         this.$goodsList.insertAdjacentHTML('beforeend', `<h3>${err}</h3>`)
     }
     
-    fetchGoods() {
-        this.goods = this.api.fetch().map(({product_name, price}) => new GoodsItem(product_name, price));
-    }
+
+    createdCart(){}   
+    
+    // fetchGoods() {
+    //     this.goods = this.api.fetch().map(({product_name, price}) => new GoodsItem(product_name, price));
+    // }    
+    
+    //метод добавления события на кнопки в витрине
+    addbuttonHandler(callback){ 
+        let $buttons = document.querySelectorAll(".goods-item__button");
+        console.log($buttons);
+        $buttons.forEach(element => {
+            element.addEventListener('click', callback)          
+        });
+    };
+
 
     render() {             // выводим витрину посредством "интерфейса" getHtml
             this.$goodsList.textContent = '';
             this.goods.forEach(
-                item => this.$goodsList.insertAdjacentHTML('beforeend', item.getHtml())
-            ); 
+                item => this.$goodsList.insertAdjacentHTML('beforeend', item.getHtml())                
+            );
+            this.addbuttonHandler(cartList.addCartItem);           
     }
-    sumGoods() {
+    sumGoods() { // сумма всех товаров
         let totalPrice = 0;
         this.goods.forEach( ({price}) =>  { totalPrice += price;} );
-        let $totalPriceAnswer = `<div class="goods-item__total-price">Стоимость всех товаров: ${totalPrice}</div>`;
-        console.log(totalPrice);
-        this.$goodsList.insertAdjacentHTML('afterend', $totalPriceAnswer);
-    }    
+        return totalPrice;         
+    }  
+    
+    
 }
 
 // класс товара корзины. Наследуем его от класса товара. К прежним свойствам добавим свойство количество товаров
 // и переопределим вывод товара .
 class CartItem extends GoodsItem { 
-    constructor (product_name, price) {
-        super(product_name, price);
-        this.quantity = 1; //по умолчанию количество товаров добавленных в корзину 1. Если полльзователь ничего не указывал.
+    constructor (product_name, price, id, quantity) {
+        super(product_name, price, id);
+        this.quantity = quantity; //по умолчанию количество товаров добавленных в корзину 1. Если полльзователь ничего не указывал.
     }
 
-    getQuantity(){ // присваиваем this.quantity количество товаров указанных пользователем.
+    addQuantity(a){ // присваиваем this.quantity количество товаров указанных пользователем желающим изменить количество товаров в корзине.
+        this.quantity = a; 
     }; 
 
-    getHtml () { // переопределяем вывод товара в корзине изменим стили, добавим количество и добавим кнопку удалить товар.
-        return `<div class="cart-item"><div class="cart-item__img"></div><h3 class="cart-item__title">${this.title}
+    getHtml () { // переопределяем вывод товара в корзине. изменим стили, добавим количество и добавим кнопку удалить товар.
+        return `<div class="cart-item"><div class="cart-item__img"></div><h3 class="cart-item__title">${this.product_name}
     </h3><p class="cart-item__price">Цена: ${this.price} у.е.</p>
     <div class="cart-item__qty">
     <label for="qty-id">
@@ -134,20 +154,83 @@ class CartItem extends GoodsItem {
                 <option value="3">3</option>                           
         </select>
     </label>
-    </div><p class="cart-item__quantity">Количество:${this.quantity}</p><button class="cart-item__button">Удалить из корзины</button></div>`;
-    } 
+    </div><p class="cart-item__quantity">Количество:${this.quantity}</p><button class="cart-item__button" id="${this.id_product}">Удалить из корзины</button></div>`;
+    }
+    
+    
 }
 
-// Класс корзины с предполагаемыми методами (Задание 1)
+// Класс корзины
 class CartList {
-    constructor() {
-        this.addCartItems = [];
+    constructor(isClass) {
+        
+        this.$container = document.querySelector(`.${isClass}`); //'.cart-list' 
+        this.arr = [];          
     }
+    
+
+    addCartItem(e){
+
+        // узнакть как передавать ссылку на this.arr тут это не работает так как this это (e)
+        let id = e.target.id;
+        let ind = goodsList.goods.findIndex( obj => {
+            return obj.id_product == id
+        });
+        let {product_name, price} = goodsList.goods[ind];
+        
+        // проверка на наличие выбранного товара в корзине
+            ind = cartList.arr.findIndex( obj => {
+            return obj.id_product == id
+        });        
+         // добавляем если не было, если был, увеличивоем количество.
+        if (ind == -1) {
+            cartList.arr.push(new CartItem(product_name, price, id, 1));
+            console.log(cartList.arr);
+        } else {
+            cartList.arr[ind].quantity = parseInt(cartList.arr[ind].quantity) + 1;
+            console.log(cartList.arr);
+        }       
+        cartList.renderCart();  
+    }
+
+    deleteCartItem(e){
+        let id = e.target.id;
+        let ind = cartList.arr.findIndex( obj => {
+            return obj.id_product == id
+        });
+        cartList.arr.splice(ind, 1);
+        console.log(cartList.arr)
+        cartList.renderCart(); 
+    };
+
+    renderCart() {             // выводим корзину посредством "интерфейса" getHtml
+    cartList.$container.textContent = '';
+    cartList.arr.forEach(
+        item => cartList.$container.insertAdjacentHTML('beforeend', item.getHtml())                
+    ); 
+    cartList.addbuttonHandler(cartList.deleteCartItem);
+    console.log(this.sumGoods());   
+    }
+
+    addbuttonHandler(callback){ 
+        let $buttons = document.querySelectorAll(".cart-item__button");
+        console.log($buttons);
+        $buttons.forEach(element => {
+            element.addEventListener('click', callback)          
+        });
+    };
+
 
     openCart(){
-        console.log('корзина появилась в консоли')
+        console.log('корзина появилась в консоли');
+        
     }
 
+    sumGoods() { // сумма всех товаров
+        let totalPrice = 0;
+        this.arr.forEach( ({price,quantity}) =>  { totalPrice = totalPrice + (price * quantity);} );
+        return totalPrice;         
+    }  
 
     // добавление товара в корзину после действия пользователя (нажать добавить)
     addToCart(){} 
@@ -158,15 +241,12 @@ class CartList {
     // сумма товаров в корзине
     orderSummary(){} // вывод сводки по заказу и кнопки оформления заказа( кнопки регистрация, быстрый заказ)
     
-    //вывод товаров 
-    render(){}
-}
-const header = new Header();
-const cartList = new CartList();
-header.setButtonHandler(cartList.openCart);
-const goodsList = new GoodsList();
 
-// goodsList.fetchGoods(); // чтобы записать список товаров в свойство goods
-// goodsList.render(); //вывод витрины товаров 
-// goodsList.sumGoods(); // вывод суммы товаров
+}
+//const header = new Header();
+const goodsList = new GoodsList('goods-list');
+const cartList = new CartList('cart-list');
+//header.setButtonHandler(cartList.openCart);
+
+
 
