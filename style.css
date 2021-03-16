@@ -1,3 +1,4 @@
+
 body {
     margin: 0;
 }
@@ -34,12 +35,31 @@ body {
     margin: 20px 0 0 0;
     padding: 10px;
 }
+
+.cart-item {
+    border: 1px solid #bdbdbd;
+    width: 100%;
+    padding: 10px;
+    background-color: #d8ebd1;
+    box-sizing: border-box;
+    margin:0 0 20px 0;
+}
+
+.cart-item__delete {
+margin: 20px 0 0 0;
+}
+
 .goods-item {
     width: 200px;
     background: #f0f0f0;
     padding: 5px;
     margin-bottom: 10px;
     min-height: 200px;
+}
+
+.good-items__total-price {
+    font-weight: 600;
+    font-size: 16px;
 }
 .bestseller {
     background: #ffbd88;
