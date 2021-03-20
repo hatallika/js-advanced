@@ -5,21 +5,44 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js" defer></script>
     <script src="script.js" defer></script>
     <title>eShop</title>
 </head>
 <body>
-    <header class="header">
+  <div id="app">
+      <header class="header">
         <div class="container">
-          <input type="text" id="search" placeholder="Фильтр товаров..">
-          <button class="cart-button" type="button">Корзина</button>
+          <input id="search" v-model="searchLine" v-on:input="searchHandler" placeholder="Фильтр товаров..">          
+          <button class="cart-button" v-on:click="showCart" type="button">Корзина</button>
         </div>
       
     </header>
     <main class="main container">
-      <div class="goods-list"></div>
-      <div class="cart-list"></div>
+      <div class="goods-list">
+        <h3 class="goods-null" v-if="filteredGoods.length == 0">Нет данных / Товары не найдены</h3>
+        <div class="goods-item" v-for="good in filteredGoods">
+          <div class="goods-item__img"></div>
+          <h3 class="goods-item__title">{{ good.product_name }}
+          </h3><p class="goods-item__price">Цена:{{ good.price }} у.е.</p>
+          <button class="goods-item-button" v-on:click="addToCartHandler" v-bind:id="good.id_product">Добавить</button>
+        </div>
+
+      </div>
+      <div v-if="isVisibleCart" class="cart-list" >
+        <div class="cart-item" v-for="item in cartItems"><div class="cart-item__img"></div><h3 class="cart-item__title">{{item.product_name}}
+          </h3><p class="cart-item__price">Цена: {{item.price}} у.е.</p>
+          <button type="button"  name="delete" class="cart-item__qnt" v-bind:data-qntid="item.id_product" v-on:click="deleteQuantity">-</button>
+          <span class="cart-item__quantity">Количество:{{item.qnt}}</span>
+          <button type="button"  name="add" class="cart-item__qnt" v-bind:data-qntid="item.id_product" v-on:click="addQuantity">+</button>
+                  <div class="cart-item__delete">
+                    <button class="cart-item__button" v-bind:data-id="item.id_product" v-on:click="deleteFromCartHandler">Удалить из корзины</button>
+                  </div>
+        </div>          
+      </div>
     </main>
+  </div>
+    
   </body>
   
 </html>

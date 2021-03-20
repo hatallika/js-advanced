@@ -55,6 +55,7 @@ margin: 20px 0 0 0;
     padding: 5px;
     margin-bottom: 10px;
     min-height: 200px;
+    align-self: flex-start;
 }
 
 .good-items__total-price {
