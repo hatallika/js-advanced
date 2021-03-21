@@ -58,7 +58,7 @@ margin: 20px 0 0 0;
     align-self: flex-start;
 }
 
-.good-items__total-price {
+.cart-list__price {
     font-weight: 600;
     font-size: 16px;
 }

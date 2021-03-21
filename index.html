@@ -14,7 +14,9 @@
       <header class="header">
         <div class="container">
           <input id="search" v-model="searchLine" v-on:input="searchHandler" placeholder="Фильтр товаров..">          
-          <button class="cart-button" v-on:click="showCart" type="button">Корзина</button>
+          <button class="cart-button" v-on:click="showCart" type="button">
+            Корзина <span v-if="summCartItemsquant>0">{{summCartItemsquant}}</span>
+          </button>
         </div>
       
     </header>
@@ -25,20 +27,21 @@
           <div class="goods-item__img"></div>
           <h3 class="goods-item__title">{{ good.product_name }}
           </h3><p class="goods-item__price">Цена:{{ good.price }} у.е.</p>
-          <button class="goods-item-button" v-on:click="addToCartHandler" v-bind:id="good.id_product">Добавить</button>
+          <button class="goods-item-button" v-on:click="addToCartHandler" v-bind:id="good.id_product">Добавить</button>          
         </div>
-
+        
       </div>
       <div v-if="isVisibleCart" class="cart-list" >
+        <div class="cart-list__price">Сумма товаров: {{totalPrice}}</div>
         <div class="cart-item" v-for="item in cartItems"><div class="cart-item__img"></div><h3 class="cart-item__title">{{item.product_name}}
           </h3><p class="cart-item__price">Цена: {{item.price}} у.е.</p>
           <button type="button"  name="delete" class="cart-item__qnt" v-bind:data-qntid="item.id_product" v-on:click="deleteQuantity">-</button>
-          <span class="cart-item__quantity">Количество:{{item.qnt}}</span>
+          <span class="cart-item__quantity">Количество: <b>{{item.qnt}}</b></span>
           <button type="button"  name="add" class="cart-item__qnt" v-bind:data-qntid="item.id_product" v-on:click="addQuantity">+</button>
                   <div class="cart-item__delete">
                     <button class="cart-item__button" v-bind:data-id="item.id_product" v-on:click="deleteFromCartHandler">Удалить из корзины</button>
                   </div>
-        </div>          
+        </div>                  
       </div>
     </main>
   </div>

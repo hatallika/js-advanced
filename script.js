@@ -10,6 +10,21 @@ const vue = new Vue({
     searchLine: '',
     isVisibleCart: false,
   },
+  computed:{
+    //считает количество товаров в корзине
+    summCartItemsquant(){
+      let summQnt = 0;
+      this.cartItems.forEach(({qnt}) => { summQnt += qnt});
+      return summQnt;        
+    },      
+    
+
+    totalPrice(){
+      let summ = 0;
+      this.cartItems.forEach(({price,qnt}) => { summ += (qnt*price)});
+      return summ;
+    }
+  },
   methods: {
 
     searchHandler(){
@@ -45,9 +60,8 @@ const vue = new Vue({
     
     // показать корзину
     showCart(){
-      if(this.isVisibleCart) {
-        this.isVisibleCart = false;}
-        else (this.isVisibleCart = true);
+
+      this.isVisibleCart = !this.isVisibleCart;    
     },
 
     //уменьшить количество товара в корзине
