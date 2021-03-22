@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 3 Lesson-2 Gamburger</title>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+    <form name="" action="" id="form">
+        <fieldset>
+            <legend>Заказ гамбургера</legend>
+            <div class="row">
+                <p>Выберите размер</p>
+                <div class="radio-variant">
+                    <input type="radio" name="size" id="small" value="small" checked/>
+                    <label for="small">Small</label>
+                </div>
+                <div class="radio-variant">
+                    <input type="radio" name="size" id="large" value="large" />
+                    <label for="large">Large</label>
+                </div>
+            </div>
+            <div class="row stuffing">
+                <p>Выберите начинку</p>
+                <select id="stuffing" name="stuffing">
+                    <option value="cheese" id="cheese">Начинка с сыром</option>
+                    <option value="salad" id="salad">Начинка с салатом</option>
+                    <option value="potato" id="potato">Начинка с картофелем</option>                    
+                </select>
+            </div>
+            <div class="row topping">
+                <div class="checkbox-variant">
+                    <input type="checkbox" name="add" id="spice" value="spice"/>
+                    <label for="spice">Специи</label>
+                </div>
+                <div class="checkbox-variant">
+                    <input type="checkbox" name="add" id="sous" value="sous"/>
+                    <label for="sous">Майонез</label>
+                </div>
+            </div>
+        </div>
+            <div class="submit">
+                <button type="button" id="order">Сделать заказ </button>
+            </div>
+        </fieldset>
+        <br />
+        <div id="result">
+            <div><b>Стоимость:</b> <span id="price">0</span> рублей</div>
+            <div><b>Калорийность:</b> <span id="calories">0</span> кКал</div>
+        </div>
+    </form> 
+
+
+</body>
+</html>
