@@ -1,0 +1,10 @@
+[
+    { "product_name": "Мышка", "price": 100, "id_product": 123 },
+    { "product_name": "Клавиатура", "price": 200, "id_product": 456 },
+    { "product_name": "Колонки", "price": 130, "id_product": 121 },
+    { "product_name": "Наушники", "price": 150, "id_product": 70 },
+    { "product_name": "Ноутбук", "price": 400, "id_product": 25 },
+    { "product_name": "Коврик", "price": 150, "id_product": 32 },
+    { "product_name": "Кресло", "price": 160, "id_product": 43 } 
+]
+

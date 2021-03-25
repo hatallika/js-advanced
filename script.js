@@ -1,4 +1,6 @@
-const API_URL = "https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses";
+//const API_URL = "https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses";
+const API_URL = ".";
+
 Vue.component('server-error', {
   template: `<h3 class="goods-null" v-if="iserror">Ошибка сервера</h3>`,
   props: ['iserror'],
@@ -86,7 +88,8 @@ Vue.component('searching',{
 const vue = new Vue({
   el: "#app",
   data: {
-    url: `${API_URL}/catalogData.json`,
+    //url: `${API_URL}/catalogData.json`,
+    urlGet: `${API_URL}/catalogData/`,
     goods: [],
     filteredGoods: [],
     cartItems: [],    
@@ -165,7 +168,7 @@ const vue = new Vue({
       this.cartItems[indexCart].qnt = parseInt( this.cartItems[indexCart].qnt) +1;
     },
 
-    fetch(error, success) {
+    fetchGET(error, success) {
       let xhr;
     
       if (window.XMLHttpRequest) {
@@ -184,13 +187,36 @@ const vue = new Vue({
         }
       }
     
-      xhr.open('GET', this.url, true);
+      xhr.open('GET', this.urlGet, true);
+      xhr.send();
+    },
+
+    fetchPOST(error, success) {
+      let xhr;
+    
+      if (window.XMLHttpRequest) {
+        xhr = new XMLHttpRequest();
+      } else if (window.ActiveXObject) { 
+        xhr = new ActiveXObject("Microsoft.XMLHTTP");
+      }
+    
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if(xhr.status === 200) {
+            success(JSON.parse(xhr.responseText));
+          } else if(xhr.status > 400) {
+            error('все пропало');
+          }
+        }
+      }
+    
+      xhr.open('POST', this.url, true);
       xhr.send();
     },
 
     fetchPromise() {
       return new Promise((resolve, reject) => {
-        this.fetch(reject, resolve)
+        this.fetchGET(reject, resolve)
       }) 
     }
   },
