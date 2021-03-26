@@ -94,11 +94,13 @@ const vue = new Vue({
     urlPostDelete:`deleteToCart`,
     urladdQnt: `addQntToCart`,
     urlDelQnt: `deleteQntToCart`,
+    urlGetCart: `cartData`,
     goods: [],
     filteredGoods: [],
     cartItems: [],    
     isVisibleCart: false,
     isError: false,
+    cartApi: [],
   },
   
   computed:{
@@ -182,7 +184,7 @@ const vue = new Vue({
       this.fetchPromisePOST(this.urladdQnt, itemForApi);
     },
 
-    fetchGET(error, success) {
+    fetchGET(error, success, url) {
       let xhr;
     
       if (window.XMLHttpRequest) {
@@ -201,7 +203,7 @@ const vue = new Vue({
         }
       }
     
-      xhr.open('GET', `${API_URL}/${this.urlGet}`, true);
+      xhr.open('GET', `${API_URL}/${url}`, true);
       xhr.send();
     },
 
@@ -229,9 +231,9 @@ const vue = new Vue({
       xhr.send(JSON.stringify(data));
     },
 
-    fetchPromiseGET() {
+    fetchPromiseGET(url) {
       return new Promise((resolve, reject) => {
-        this.fetchGET(reject, resolve)
+        this.fetchGET(reject, resolve, url)
       }) 
     },
 
@@ -242,17 +244,18 @@ const vue = new Vue({
     }
   },
   mounted(){
-    this.fetchPromiseGET()
+    this.fetchPromiseGET(this.urlGet)
     .then(data => {
       this.goods = data;
       this.filteredGoods = data;
-      // let datacart =         
-      //   {product_name: "Клавиатура", price: 200, id_product: 456 };
-      // this.fetchPromisePOST(datacart);
-    })
+      this.fetchPromiseGET(this.urlGetCart).then(data => {
+        this.cartItems = data;
+        console.log (this.cartItems);
+      })      
+    })    
     .catch(err => {
       this.isError = true;
       console.log(this.isError);
-    })
+    })    
   }
 })

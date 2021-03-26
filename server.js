@@ -1,6 +1,9 @@
+const time1 = new Date();
 const express = require('express');
+
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const { json } = require('express');
 
 const app = express();
 
@@ -10,6 +13,12 @@ app.use(express.static('.'));
 
 app.get('/catalogData', (req, res) => {
     fs.readFile('catalog.json', 'utf8', (err, data) => {
+        res.send(data);
+    });
+});
+
+app.get('/cartData', (req, res) => {
+    fs.readFile('cart.json', 'utf8', (err, data) => {
         res.send(data);
     });
 });
@@ -30,11 +39,29 @@ app.post('/addToCart', (req, res) => {
                     res.send('{"result": 0}');
                 } else {
                     res.send('{"result": 1}');
+                    writeLog(item, 'add to cart');
                 }
             });
         }
     });
 });
+
+//запись лога
+function writeLog(item, isAction) {
+    let itemLog = {action: isAction, data: time1, good: item };
+    fs.readFile("stats.json", "utf8", function(error,data){
+        if (error) throw error;        
+        let log = JSON.parse(data);
+        log.push(itemLog);
+        
+        fs.writeFile('stats.json', JSON.stringify(log), (err) => {
+            if (err) {
+                console.log('ошибка записи файла stats.json');
+            }     
+        });
+    });
+    
+}    
 
 app.post('/deleteToCart', (req, res) => {
     fs.readFile('cart.json', 'utf8', (err, data) => {
@@ -45,7 +72,7 @@ app.post('/deleteToCart', (req, res) => {
                 const item = req.body;
 
                 const id = item.id_product;
-                console.log(id);
+                
                 let ind = cart.findIndex((item) => item.id_product == id);
                 cart.splice(ind, 1); 
 
@@ -54,6 +81,8 @@ app.post('/deleteToCart', (req, res) => {
                     res.send('{"result": 0}');
                 } else {
                     res.send('{"result": 1}');
+                    writeLog(item, 'delete');
+
                 }
             });
         }
@@ -76,6 +105,7 @@ app.post('/addQntToCart', (req, res) => {
                     res.send('{"result": 0}');
                 } else {
                     res.send('{"result": 1}');
+                    writeLog(cart[ind], 'addQnt');
                 }
             });
         }
@@ -90,10 +120,11 @@ app.post('/deleteQntToCart', (req, res) => {
                 const cart = JSON.parse(data);
                 const itemBody = req.body; //{id_product} // передаем id товара у которого уменьшим количество.
                 let ind = cart.findIndex((item) => item.id_product == itemBody.id_product);  
-                
+                var cartLog = cart[ind]; // запишем данные для лога пока не удалили
                 if (cart[ind].qnt >1){
                     cart[ind].qnt = parseInt(cart[ind].qnt) - 1;
                 } else {
+                    
                     cart.splice(ind, 1); // удаляем товар если он был 1
                 }
                 
@@ -103,6 +134,7 @@ app.post('/deleteQntToCart', (req, res) => {
                     res.send('{"result": 0}');
                 } else {
                     res.send('{"result": 1}');
+                    writeLog(cartLog, 'delete qnt'); // log
                 }
             });
         }
