@@ -113,7 +113,7 @@ app.post('/addQntToCart', (req, res) => {
 });
 
 app.post('/deleteQntToCart', (req, res) => {
-    fs.readFile('cart.json', 'utf8', (err, data) => {
+    fs.readFile('server/cart.json', 'utf8', (err, data) => {
         if (err) {
             res.send('{"result": 0}');
         } else {
@@ -129,7 +129,7 @@ app.post('/deleteQntToCart', (req, res) => {
                 }
                 
             // переписываем корзину
-            fs.writeFile('cart.json', JSON.stringify(cart), (err) => {
+            fs.writeFile('server/cart.json', JSON.stringify(cart), (err) => {
                 if (err) {
                     res.send('{"result": 0}');
                 } else {
