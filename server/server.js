@@ -12,20 +12,20 @@ app.use(bodyParser.json()); // Указываем, что содержимое -
 app.use(express.static('.'));
 
 app.get('/catalogData', (req, res) => {
-    fs.readFile('catalog.json', 'utf8', (err, data) => {
+    fs.readFile('server/catalog.json', 'utf8', (err, data) => {
         res.send(data);
     });
 });
 
 app.get('/cartData', (req, res) => {
-    fs.readFile('cart.json', 'utf8', (err, data) => {
+    fs.readFile('server/cart.json', 'utf8', (err, data) => {
         res.send(data);
     });
 });
 
 
 app.post('/addToCart', (req, res) => {
-    fs.readFile('cart.json', 'utf8', (err, data) => {
+    fs.readFile('server/cart.json', 'utf8', (err, data) => {
         if (err) {
             res.send('{"result": 0}');
         } else {
@@ -34,7 +34,7 @@ app.post('/addToCart', (req, res) => {
 
             cart.push(item);
 
-            fs.writeFile('cart.json', JSON.stringify(cart), (err) => {
+            fs.writeFile('server/cart.json', JSON.stringify(cart), (err) => {
                 if (err) {
                     res.send('{"result": 0}');
                 } else {
@@ -49,12 +49,12 @@ app.post('/addToCart', (req, res) => {
 //запись лога
 function writeLog(item, isAction) {
     let itemLog = {action: isAction, data: time1, good: item };
-    fs.readFile("stats.json", "utf8", function(error,data){
+    fs.readFile("server/stats.json", "utf8", function(error,data){
         if (error) throw error;        
         let log = JSON.parse(data);
         log.push(itemLog);
         
-        fs.writeFile('stats.json', JSON.stringify(log), (err) => {
+        fs.writeFile('server/stats.json', JSON.stringify(log), (err) => {
             if (err) {
                 console.log('ошибка записи файла stats.json');
             }     
@@ -64,7 +64,7 @@ function writeLog(item, isAction) {
 }    
 
 app.post('/deleteToCart', (req, res) => {
-    fs.readFile('cart.json', 'utf8', (err, data) => {
+    fs.readFile('server/cart.json', 'utf8', (err, data) => {
         if (err) {
             res.send('{"result": 0}');
         } else {
@@ -76,7 +76,7 @@ app.post('/deleteToCart', (req, res) => {
                 let ind = cart.findIndex((item) => item.id_product == id);
                 cart.splice(ind, 1); 
 
-            fs.writeFile('cart.json', JSON.stringify(cart), (err) => {
+            fs.writeFile('server/cart.json', JSON.stringify(cart), (err) => {
                 if (err) {
                     res.send('{"result": 0}');
                 } else {
@@ -90,7 +90,7 @@ app.post('/deleteToCart', (req, res) => {
 });
 
 app.post('/addQntToCart', (req, res) => {
-    fs.readFile('cart.json', 'utf8', (err, data) => {
+    fs.readFile('server/cart.json', 'utf8', (err, data) => {
         if (err) {
             res.send('{"result": 0}');
         } else {
@@ -100,7 +100,7 @@ app.post('/addQntToCart', (req, res) => {
                 let ind = cart.findIndex((item) => item.id_product == itemBody.id_product);                
                 cart[ind].qnt = cart[ind].qnt + itemBody.addQnt; // меняем количество на указанное в приложении
             // переписываем корзину
-            fs.writeFile('cart.json', JSON.stringify(cart), (err) => {
+            fs.writeFile('server/cart.json', JSON.stringify(cart), (err) => {
                 if (err) {
                     res.send('{"result": 0}');
                 } else {
@@ -113,7 +113,7 @@ app.post('/addQntToCart', (req, res) => {
 });
 
 app.post('/deleteQntToCart', (req, res) => {
-    fs.readFile('cart.json', 'utf8', (err, data) => {
+    fs.readFile('server/cart.json', 'utf8', (err, data) => {
         if (err) {
             res.send('{"result": 0}');
         } else {
@@ -129,7 +129,7 @@ app.post('/deleteQntToCart', (req, res) => {
                 }
                 
             // переписываем корзину
-            fs.writeFile('cart.json', JSON.stringify(cart), (err) => {
+            fs.writeFile('server/cart.json', JSON.stringify(cart), (err) => {
                 if (err) {
                     res.send('{"result": 0}');
                 } else {
